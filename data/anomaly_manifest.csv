@@ -1,0 +1,151 @@
+anomaly_id,rule_id,anomaly_type,table,record_id,detail
+A0001,R01,Duplicate claim_id,claims,CLM-100718,Claim row appears twice
+A0002,R01,Duplicate claim_id,claims,CLM-104321,Claim row appears twice
+A0003,R01,Duplicate claim_id,claims,CLM-104945,Claim row appears twice
+A0004,R01,Duplicate claim_id,claims,CLM-102304,Claim row appears twice
+A0005,R01,Duplicate claim_id,claims,CLM-103028,Claim row appears twice
+A0006,R01,Duplicate claim_id,claims,CLM-100820,Claim row appears twice
+A0007,R01,Duplicate claim_id,claims,CLM-100500,Claim row appears twice
+A0008,R01,Duplicate claim_id,claims,CLM-104562,Claim row appears twice
+A0009,R01,Duplicate claim_id,claims,CLM-104288,Claim row appears twice
+A0010,R01,Duplicate claim_id,claims,CLM-102840,Claim row appears twice
+A0011,R01,Duplicate claim_id,claims,CLM-104157,Claim row appears twice
+A0012,R01,Duplicate claim_id,claims,CLM-104620,Claim row appears twice
+A0013,R02,Negative charge amount,claims,CLM-100938,charge_amount set to -733.56
+A0014,R02,Negative charge amount,claims,CLM-101246,charge_amount set to -241.9
+A0015,R02,Negative charge amount,claims,CLM-101011,charge_amount set to -916.38
+A0016,R02,Negative charge amount,claims,CLM-102797,charge_amount set to -221.99
+A0017,R02,Negative charge amount,claims,CLM-101802,charge_amount set to -291.19
+A0018,R02,Negative charge amount,claims,CLM-101225,charge_amount set to -145.6
+A0019,R02,Negative charge amount,claims,CLM-104942,charge_amount set to -80.84
+A0020,R02,Negative charge amount,claims,CLM-102422,charge_amount set to -60.33
+A0021,R02,Negative charge amount,claims,CLM-102973,charge_amount set to -335.26
+A0022,R02,Negative charge amount,claims,CLM-101368,charge_amount set to -53.48
+A0023,R02,Negative charge amount,claims,CLM-100029,charge_amount set to -198.39
+A0024,R02,Negative charge amount,claims,CLM-104143,charge_amount set to -253.28
+A0025,R03,Missing service date,claims,CLM-101312,service_date blanked
+A0026,R03,Missing service date,claims,CLM-100974,service_date blanked
+A0027,R03,Missing service date,claims,CLM-101021,service_date blanked
+A0028,R03,Missing service date,claims,CLM-103432,service_date blanked
+A0029,R03,Missing service date,claims,CLM-104624,service_date blanked
+A0030,R03,Missing service date,claims,CLM-103112,service_date blanked
+A0031,R03,Missing service date,claims,CLM-103823,service_date blanked
+A0032,R03,Missing service date,claims,CLM-103419,service_date blanked
+A0033,R03,Missing service date,claims,CLM-104530,service_date blanked
+A0034,R03,Missing service date,claims,CLM-104932,service_date blanked
+A0035,R03,Missing service date,claims,CLM-101636,service_date blanked
+A0036,R03,Missing service date,claims,CLM-101742,service_date blanked
+A0037,R03,Missing service date,claims,CLM-100956,service_date blanked
+A0038,R03,Missing service date,claims,CLM-104125,service_date blanked
+A0039,R04,Invalid procedure code,claims,CLM-101610,cpt_code set to 99999
+A0040,R04,Invalid procedure code,claims,CLM-101018,cpt_code set to ABCDE
+A0041,R04,Invalid procedure code,claims,CLM-100963,cpt_code set to 99999
+A0042,R04,Invalid procedure code,claims,CLM-101477,cpt_code set to 1234567
+A0043,R04,Invalid procedure code,claims,CLM-103016,cpt_code set to 00000
+A0044,R04,Invalid procedure code,claims,CLM-103533,cpt_code set to 00000
+A0045,R04,Invalid procedure code,claims,CLM-102385,cpt_code set to ABCDE
+A0046,R04,Invalid procedure code,claims,CLM-103711,cpt_code set to 00000
+A0047,R04,Invalid procedure code,claims,CLM-100539,cpt_code set to ABCDE
+A0048,R04,Invalid procedure code,claims,CLM-103990,cpt_code set to 00000
+A0049,R04,Invalid procedure code,claims,CLM-103171,cpt_code set to 99999
+A0050,R04,Invalid procedure code,claims,CLM-102359,cpt_code set to 99999
+A0051,R04,Invalid procedure code,claims,CLM-100680,cpt_code set to 1234567
+A0052,R04,Invalid procedure code,claims,CLM-103302,cpt_code set to 99999
+A0053,R05,Malformed ICD-10 code,claims,CLM-103598,icd10_code set to E119
+A0054,R05,Malformed ICD-10 code,claims,CLM-103911,icd10_code set to I1O
+A0055,R05,Malformed ICD-10 code,claims,CLM-104968,icd10_code set to E11.99999
+A0056,R05,Malformed ICD-10 code,claims,CLM-104031,icd10_code set to 99.9
+A0057,R05,Malformed ICD-10 code,claims,CLM-102517,icd10_code set to ICD10-E11
+A0058,R05,Malformed ICD-10 code,claims,CLM-101206,icd10_code set to ICD10-E11
+A0059,R05,Malformed ICD-10 code,claims,CLM-100605,icd10_code set to E11.99999
+A0060,R05,Malformed ICD-10 code,claims,CLM-102032,icd10_code set to I1O
+A0061,R05,Malformed ICD-10 code,claims,CLM-101019,icd10_code set to 99.9
+A0062,R05,Malformed ICD-10 code,claims,CLM-101178,icd10_code set to I1O
+A0063,R05,Malformed ICD-10 code,claims,CLM-100697,icd10_code set to E119
+A0064,R05,Malformed ICD-10 code,claims,CLM-101568,icd10_code set to E11.99999
+A0065,R05,Malformed ICD-10 code,claims,CLM-103475,icd10_code set to E119
+A0066,R05,Malformed ICD-10 code,claims,CLM-101211,icd10_code set to 99.9
+A0067,R06,Orphan payment,payments,PAY-ORPH-001,Payment references a claim_id that does not exist
+A0068,R06,Orphan payment,payments,PAY-ORPH-002,Payment references a claim_id that does not exist
+A0069,R06,Orphan payment,payments,PAY-ORPH-003,Payment references a claim_id that does not exist
+A0070,R06,Orphan payment,payments,PAY-ORPH-004,Payment references a claim_id that does not exist
+A0071,R06,Orphan payment,payments,PAY-ORPH-005,Payment references a claim_id that does not exist
+A0072,R06,Orphan payment,payments,PAY-ORPH-006,Payment references a claim_id that does not exist
+A0073,R06,Orphan payment,payments,PAY-ORPH-007,Payment references a claim_id that does not exist
+A0074,R06,Orphan payment,payments,PAY-ORPH-008,Payment references a claim_id that does not exist
+A0075,R06,Orphan payment,payments,PAY-ORPH-009,Payment references a claim_id that does not exist
+A0076,R06,Orphan payment,payments,PAY-ORPH-010,Payment references a claim_id that does not exist
+A0077,R06,Orphan payment,payments,PAY-ORPH-011,Payment references a claim_id that does not exist
+A0078,R06,Orphan payment,payments,PAY-ORPH-012,Payment references a claim_id that does not exist
+A0079,R06,Orphan payment,payments,PAY-ORPH-013,Payment references a claim_id that does not exist
+A0080,R06,Orphan payment,payments,PAY-ORPH-014,Payment references a claim_id that does not exist
+A0081,R07,Overpayment,payments,PAY-201803,paid 2738.37 exceeds charge
+A0082,R07,Overpayment,payments,PAY-201321,paid 212.29 exceeds charge
+A0083,R07,Overpayment,payments,PAY-201427,paid 186.41 exceeds charge
+A0084,R07,Overpayment,payments,PAY-200101,paid 138.22 exceeds charge
+A0085,R07,Overpayment,payments,PAY-203647,paid 146.78 exceeds charge
+A0086,R07,Overpayment,payments,PAY-200689,paid 381.43 exceeds charge
+A0087,R07,Overpayment,payments,PAY-202259,paid 886.28 exceeds charge
+A0088,R07,Overpayment,payments,PAY-202119,paid 218.9 exceeds charge
+A0089,R07,Overpayment,payments,PAY-201889,paid 392.01 exceeds charge
+A0090,R07,Overpayment,payments,PAY-200286,paid 340.87 exceeds charge
+A0091,R07,Overpayment,payments,PAY-200562,paid 61.64 exceeds charge
+A0092,R07,Overpayment,payments,PAY-203229,paid 47.72 exceeds charge
+A0093,R07,Overpayment,payments,PAY-200606,paid 429.5 exceeds charge
+A0094,R07,Overpayment,payments,PAY-201070,paid 1025.93 exceeds charge
+A0095,R08,Payment before service date,payments,PAY-203130,payment_date earlier than service_date
+A0096,R08,Payment before service date,payments,PAY-201142,payment_date earlier than service_date
+A0097,R08,Payment before service date,payments,PAY-202679,payment_date earlier than service_date
+A0098,R08,Payment before service date,payments,PAY-201302,payment_date earlier than service_date
+A0099,R08,Payment before service date,payments,PAY-203888,payment_date earlier than service_date
+A0100,R08,Payment before service date,payments,PAY-202199,payment_date earlier than service_date
+A0101,R08,Payment before service date,payments,PAY-203110,payment_date earlier than service_date
+A0102,R08,Payment before service date,payments,PAY-203870,payment_date earlier than service_date
+A0103,R08,Payment before service date,payments,PAY-200443,payment_date earlier than service_date
+A0104,R08,Payment before service date,payments,PAY-203632,payment_date earlier than service_date
+A0105,R08,Payment before service date,payments,PAY-203375,payment_date earlier than service_date
+A0106,R08,Payment before service date,payments,PAY-202669,payment_date earlier than service_date
+A0107,R08,Payment before service date,payments,PAY-201299,payment_date earlier than service_date
+A0108,R08,Payment before service date,payments,PAY-203907,payment_date earlier than service_date
+A0109,R09,Paid claim without payment,claims,CLM-104979,Status is Paid but no payment record exists
+A0110,R09,Paid claim without payment,claims,CLM-100468,Status is Paid but no payment record exists
+A0111,R09,Paid claim without payment,claims,CLM-103278,Status is Paid but no payment record exists
+A0112,R09,Paid claim without payment,claims,CLM-100968,Status is Paid but no payment record exists
+A0113,R09,Paid claim without payment,claims,CLM-101168,Status is Paid but no payment record exists
+A0114,R09,Paid claim without payment,claims,CLM-102477,Status is Paid but no payment record exists
+A0115,R09,Paid claim without payment,claims,CLM-101179,Status is Paid but no payment record exists
+A0116,R09,Paid claim without payment,claims,CLM-102884,Status is Paid but no payment record exists
+A0117,R09,Paid claim without payment,claims,CLM-100809,Status is Paid but no payment record exists
+A0118,R09,Paid claim without payment,claims,CLM-102004,Status is Paid but no payment record exists
+A0119,R09,Paid claim without payment,claims,CLM-100675,Status is Paid but no payment record exists
+A0120,R09,Paid claim without payment,claims,CLM-100561,Status is Paid but no payment record exists
+A0121,R09,Paid claim without payment,claims,CLM-100839,Status is Paid but no payment record exists
+A0122,R09,Paid claim without payment,claims,CLM-103664,Status is Paid but no payment record exists
+A0123,R10,Denied claim without denial code,claims,CLM-104349,Status is Denied but denial_code is blank
+A0124,R10,Denied claim without denial code,claims,CLM-100252,Status is Denied but denial_code is blank
+A0125,R10,Denied claim without denial code,claims,CLM-101804,Status is Denied but denial_code is blank
+A0126,R10,Denied claim without denial code,claims,CLM-100767,Status is Denied but denial_code is blank
+A0127,R10,Denied claim without denial code,claims,CLM-100469,Status is Denied but denial_code is blank
+A0128,R10,Denied claim without denial code,claims,CLM-101343,Status is Denied but denial_code is blank
+A0129,R10,Denied claim without denial code,claims,CLM-103170,Status is Denied but denial_code is blank
+A0130,R10,Denied claim without denial code,claims,CLM-101339,Status is Denied but denial_code is blank
+A0131,R10,Denied claim without denial code,claims,CLM-102012,Status is Denied but denial_code is blank
+A0132,R10,Denied claim without denial code,claims,CLM-103617,Status is Denied but denial_code is blank
+A0133,R10,Denied claim without denial code,claims,CLM-100210,Status is Denied but denial_code is blank
+A0134,R10,Denied claim without denial code,claims,CLM-103053,Status is Denied but denial_code is blank
+A0135,R10,Denied claim without denial code,claims,CLM-100306,Status is Denied but denial_code is blank
+A0136,R10,Denied claim without denial code,claims,CLM-103205,Status is Denied but denial_code is blank
+A0137,R11,Duplicate payment,payments,PAY-203962,Duplicate of PAY-203840
+A0138,R11,Duplicate payment,payments,PAY-203963,Duplicate of PAY-202231
+A0139,R11,Duplicate payment,payments,PAY-203964,Duplicate of PAY-203306
+A0140,R11,Duplicate payment,payments,PAY-203965,Duplicate of PAY-201443
+A0141,R11,Duplicate payment,payments,PAY-203966,Duplicate of PAY-202738
+A0142,R11,Duplicate payment,payments,PAY-203967,Duplicate of PAY-203551
+A0143,R11,Duplicate payment,payments,PAY-203968,Duplicate of PAY-200849
+A0144,R11,Duplicate payment,payments,PAY-203969,Duplicate of PAY-203320
+A0145,R11,Duplicate payment,payments,PAY-203970,Duplicate of PAY-201718
+A0146,R11,Duplicate payment,payments,PAY-203971,Duplicate of PAY-200784
+A0147,R11,Duplicate payment,payments,PAY-203972,Duplicate of PAY-200744
+A0148,R11,Duplicate payment,payments,PAY-203973,Duplicate of PAY-202834
+A0149,R11,Duplicate payment,payments,PAY-203974,Duplicate of PAY-200783
+A0150,R11,Duplicate payment,payments,PAY-203975,Duplicate of PAY-201593
