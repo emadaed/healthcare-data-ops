@@ -8,3 +8,6 @@ env.bak/
 
 # Python
 __pycache__/
+
+#DB
+warehouse/*.db

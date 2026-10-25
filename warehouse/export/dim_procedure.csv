@@ -1,0 +1,15 @@
+cpt_code,description,min_charge,max_charge,procedure_group
+99213,"Office visit, established patient",120.0,260.0,Evaluation & management
+99214,"Office visit, established patient (higher complexity)",180.0,380.0,Evaluation & management
+99203,"Office visit, new patient",150.0,320.0,Evaluation & management
+93000,Electrocardiogram,60.0,150.0,Diagnostics
+71046,"Chest X-ray, 2 views",90.0,220.0,Diagnostics
+80053,Comprehensive metabolic panel,40.0,110.0,Diagnostics
+85025,Complete blood count,25.0,80.0,Diagnostics
+97110,"Therapeutic exercise, 15 min",70.0,160.0,Therapy
+11042,"Debridement, subcutaneous tissue",250.0,700.0,Wound care
+97597,"Debridement, open wound",200.0,600.0,Wound care
+97606,Negative pressure wound therapy,300.0,900.0,Wound care
+E0601,CPAP device (DME),600.0,1800.0,DME
+E1390,Oxygen concentrator (DME),900.0,2600.0,DME
+K0001,Standard wheelchair (DME),700.0,2200.0,DME
