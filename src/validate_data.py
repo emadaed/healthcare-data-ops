@@ -4,7 +4,8 @@ validate_data.py  (Phase 2)
 Rule-based data quality engine for healthcare claims and payments.
 
     claims_raw.csv + billing_transactions.csv + ref_cpt_codes.csv
-        -> run 11 documented rules
+        -> clean formatting noise (spacing, case, date formats, currency text)
+        -> run 12 documented rules
         -> findings.csv, dq_scorecard.xlsx
         -> precision / recall against anomaly_manifest.csv
 
@@ -14,6 +15,7 @@ Design notes
   feeds the Excel "Rule Catalog" sheet).
 - Findings are one row per bad record, with an estimated dollars-at-risk.
 """
+import argparse
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -77,6 +79,9 @@ RULE_CATALOG = [
     Rule("R11", "Duplicate payment", "payments", "Critical",
          "same claim_id, paid_amount and payment_date appear more than once",
          "Cash overstated; possible overpayment to recover"),
+    Rule("R12", "Possible duplicate billing", "claims", "Critical",
+         "different claim_id but same patient, provider, procedure, date and charge",
+         "Likely double billing under a new claim number; compliance risk"),
 ]
 RULES = {r.rule_id: r for r in RULE_CATALOG}
 
@@ -90,21 +95,69 @@ class Data:
     claims: pd.DataFrame      # one row per claim_id (first occurrence kept)
     payments: pd.DataFrame
     valid_cpt: set
+    cleaning_log: pd.DataFrame = None  # formatting fixes applied before rule checks
+
+
+def _tidy_text(series, how="upper"):
+    """Strip spaces and normalise case; leave missing values missing."""
+    text = series.astype(str).str.strip()
+    text = text.str.upper() if how == "upper" else text.str.title()
+    return series.where(series.isna(), text)
+
+
+def _parse_dates(series):
+    """Accept ISO (YYYY-MM-DD) and US (MM/DD/YYYY) text; anything else becomes NaT."""
+    text = series.astype(str).str.strip()
+    iso = pd.to_datetime(text, format="%Y-%m-%d", errors="coerce")
+    us = pd.to_datetime(text, format="%m/%d/%Y", errors="coerce")
+    return iso.fillna(us), int((iso.isna() & us.notna()).sum())
+
+
+def _parse_money(series):
+    """Turn '$1,234.50' into 1234.5; unreadable text becomes NaN."""
+    text = series.astype(str).str.replace(r"[$,\s]", "", regex=True)
+    cleaned = series.where(series.isna(), text)
+    changed = int((series.notna() & (cleaned != series)).sum())
+    return pd.to_numeric(cleaned, errors="coerce"), changed
 
 
 def prepare(claims, payments, cpt_ref) -> Data:
-    """Fix data types. Bad values become NaN/NaT so rules can catch them."""
-    claims = claims.copy()
-    payments = payments.copy()
-    claims["charge_amount"] = pd.to_numeric(claims["charge_amount"], errors="coerce")
-    claims["service_date"] = pd.to_datetime(claims["service_date"], errors="coerce")
-    payments["paid_amount"] = pd.to_numeric(payments["paid_amount"], errors="coerce")
-    payments["payment_date"] = pd.to_datetime(payments["payment_date"], errors="coerce")
+    """Clean formatting noise and fix data types.
+
+    Formatting noise (spaces, case, date style, currency symbols) is CORRECTED and
+    logged. It is not a data integrity failure. Genuinely bad values (blank dates,
+    unknown codes) stay bad, become NaN/NaT, and are caught by the rules.
+    """
+    claims, payments, cpt_ref = claims.copy(), payments.copy(), cpt_ref.copy()
+    log = []
+
+    def tidy(df, column, how, label):
+        before = df[column]
+        df[column] = _tidy_text(before, how)
+        fixed = int((before.notna() & (before != df[column])).sum())
+        log.append({"column": label, "issue": "spacing / letter case", "values_corrected": fixed})
+
+    tidy(claims, "claim_id", "upper", "claims.claim_id")
+    tidy(claims, "cpt_code", "upper", "claims.cpt_code")
+    tidy(claims, "icd10_code", "upper", "claims.icd10_code")
+    tidy(claims, "status", "title", "claims.status")
+    tidy(payments, "claim_id", "upper", "payments.claim_id")
+    cpt_ref["cpt_code"] = _tidy_text(cpt_ref["cpt_code"], "upper")
+
+    claims["service_date"], n = _parse_dates(claims["service_date"])
+    log.append({"column": "claims.service_date", "issue": "US date format converted", "values_corrected": n})
+    payments["payment_date"], n = _parse_dates(payments["payment_date"])
+    log.append({"column": "payments.payment_date", "issue": "US date format converted", "values_corrected": n})
+    claims["charge_amount"], n = _parse_money(claims["charge_amount"])
+    log.append({"column": "claims.charge_amount", "issue": "currency text converted", "values_corrected": n})
+    payments["paid_amount"], _ = _parse_money(payments["paid_amount"])
+
     return Data(
         claims_raw=claims,
         claims=claims.drop_duplicates("claim_id", keep="first"),
         payments=payments,
         valid_cpt=set(cpt_ref["cpt_code"].astype(str)),
+        cleaning_log=pd.DataFrame(log),
     )
 
 
@@ -212,6 +265,14 @@ def r11_duplicate_payments(d: Data):
                      bad.paid_amount), len(d.payments)
 
 
+def r12_possible_duplicate_billing(d: Data):
+    key = ["patient_id", "provider_id", "cpt_code", "service_date", "charge_amount"]
+    dated = d.claims[d.claims.service_date.notna()].sort_values("claim_id")
+    bad = dated[dated.duplicated(key, keep="first")]  # keep the earliest claim as the original
+    return _findings("R12", bad.claim_id, "same patient, provider, procedure, date and charge as an earlier claim",
+                     bad.charge_amount), len(d.claims)
+
+
 RULE_FUNCTIONS = {
     "R01": r01_duplicate_claims,
     "R02": r02_negative_charge,
@@ -224,6 +285,7 @@ RULE_FUNCTIONS = {
     "R09": r09_paid_without_payment,
     "R10": r10_denied_without_code,
     "R11": r11_duplicate_payments,
+    "R12": r12_possible_duplicate_billing,
 }
 
 
@@ -287,7 +349,7 @@ def _score_row(rule_id, name, tp, fp, fn):
 # ---------------------------------------------------------------------------
 # Excel scorecard
 # ---------------------------------------------------------------------------
-def write_scorecard(path, stats, findings, evaluation, n_claims, n_payments):
+def write_scorecard(path, stats, findings, evaluation, cleaning_log, n_claims, n_payments):
     catalog = pd.DataFrame(
         [r.__dict__ for r in RULE_CATALOG]
     ).rename(columns={"rule_id": "Rule ID", "name": "Rule", "table": "Table",
@@ -359,6 +421,15 @@ def write_scorecard(path, stats, findings, evaluation, n_claims, n_payments):
         we.set_column("A:A", 8); we.set_column("B:B", 32); we.set_column("C:E", 14)
         we.set_column("F:H", 12, pct)
 
+        # --- Cleaning log -----------------------------------------------------
+        cleaning_log.to_excel(xw, sheet_name="Cleaning Log", index=False)
+        wl = xw.sheets["Cleaning Log"]
+        for col, name in enumerate(cleaning_log.columns):
+            wl.write(0, col, name.replace("_", " ").title(), head)
+        wl.set_column("A:A", 26); wl.set_column("B:B", 30); wl.set_column("C:C", 18)
+        wl.write(len(cleaning_log) + 2, 0,
+                 "Formatting fixes are corrected automatically and are NOT counted as failures.", sub)
+
         # --- Rule catalog -----------------------------------------------------
         catalog.to_excel(xw, sheet_name="Rule Catalog", index=False)
         wc = xw.sheets["Rule Catalog"]
@@ -370,28 +441,35 @@ def write_scorecard(path, stats, findings, evaluation, n_claims, n_payments):
 
 # ---------------------------------------------------------------------------
 def main():
-    REPORT_DIR.mkdir(exist_ok=True)
-    d = load_data()
+    parser = argparse.ArgumentParser(description="Run data quality rules on claims data.")
+    parser.add_argument("--data-dir", type=Path, default=DATA_DIR)
+    parser.add_argument("--report-dir", type=Path, default=REPORT_DIR)
+    args = parser.parse_args()
+
+    args.report_dir.mkdir(exist_ok=True)
+    d = load_data(args.data_dir)
     findings, stats = run_all_rules(d)
-    manifest = pd.read_csv(DATA_DIR / "anomaly_manifest.csv", dtype=str)
+    manifest = pd.read_csv(args.data_dir / "anomaly_manifest.csv", dtype=str)
     evaluation = evaluate_against_manifest(findings, manifest)
 
-    findings.to_csv(REPORT_DIR / "findings.csv", index=False)
-    write_scorecard(REPORT_DIR / "dq_scorecard.xlsx", stats, findings, evaluation,
-                    n_claims=len(d.claims), n_payments=len(d.payments))
+    findings.to_csv(args.report_dir / "findings.csv", index=False)
+    write_scorecard(args.report_dir / "dq_scorecard.xlsx", stats, findings, evaluation,
+                    d.cleaning_log, n_claims=len(d.claims), n_payments=len(d.payments))
 
     pd.set_option("display.width", 160)
-    print("DATA QUALITY SCORECARD")
+    print(f"DATA QUALITY SCORECARD  ({args.data_dir})")
     print(stats[["rule_id", "rule", "severity", "records_checked", "failures",
                  "failure_rate", "status", "dollars_at_risk"]]
           .to_string(index=False, formatters={"failure_rate": "{:.2%}".format,
                                               "dollars_at_risk": "${:,.2f}".format}))
     print(f"\nTotal findings: {len(findings)}   "
           f"Total $ at risk: ${stats.dollars_at_risk.sum():,.2f}")
+    print("\nFORMATTING FIXES (not failures)")
+    print(d.cleaning_log.to_string(index=False))
     print("\nVALIDATOR vs GROUND TRUTH")
     print(evaluation.to_string(index=False, formatters={
         "precision": "{:.0%}".format, "recall": "{:.0%}".format, "f1": "{:.0%}".format}))
-    print(f"\nSaved: {REPORT_DIR / 'dq_scorecard.xlsx'} and {REPORT_DIR / 'findings.csv'}")
+    print(f"\nSaved: {args.report_dir / 'dq_scorecard.xlsx'} and {args.report_dir / 'findings.csv'}")
 
 
 if __name__ == "__main__":

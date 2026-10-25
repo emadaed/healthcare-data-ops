@@ -1,0 +1,15 @@
+cpt_code,description,min_charge,max_charge
+99213,"Office visit, established patient",120,260
+99214,"Office visit, established patient (higher complexity)",180,380
+99203,"Office visit, new patient",150,320
+93000,Electrocardiogram,60,150
+71046,"Chest X-ray, 2 views",90,220
+80053,Comprehensive metabolic panel,40,110
+85025,Complete blood count,25,80
+97110,"Therapeutic exercise, 15 min",70,160
+11042,"Debridement, subcutaneous tissue",250,700
+97597,"Debridement, open wound",200,600
+97606,Negative pressure wound therapy,300,900
+E0601,CPAP device (DME),600,1800
+E1390,Oxygen concentrator (DME),900,2600
+K0001,Standard wheelchair (DME),700,2200
