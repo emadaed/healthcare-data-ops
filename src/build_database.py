@@ -54,6 +54,7 @@ def compare_with_python(conn: sqlite3.Connection, data_dir: Path) -> pd.DataFram
     """Rule by rule: do the SQL views and the Python engine flag the same records?"""
     py, _ = v.run_all_rules(v.load_data(data_dir))
     sql = pd.read_sql_query("SELECT rule_id, record_id, dollars_at_risk FROM dq_findings", conn)
+    sql["dollars_at_risk"] = sql["dollars_at_risk"].astype(float)  # Azure returns DECIMAL
     rows = []
     for rule in v.RULE_CATALOG:
         p = py[py.rule_id == rule.rule_id]
