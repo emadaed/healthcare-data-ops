@@ -1,0 +1,115 @@
+// =====================================================================
+// powerbi_measures.dax
+// Healthcare Revenue Cycle & Data Quality project (synthetic data)
+//
+// HOW TO USE
+// 1. Home > Enter data > create an empty table named  _Measures
+// 2. For each measure below: select _Measures > New measure > paste ONE block
+// 3. Calculated columns go on the table named in their heading (fact_claim)
+// 4. Not yet run in Power BI. If a formula shows a red underline, send the error.
+// =====================================================================
+
+
+// ---------------------------------------------------------------------
+// REVENUE CYCLE MEASURES
+// ---------------------------------------------------------------------
+
+Claims = COUNTROWS ( fact_claim )
+
+Total Charges = SUM ( fact_claim[charge_amount] )
+
+Total Paid = SUM ( fact_claim[paid_amount] )
+
+// Same as Total Charges but leaves out claims that have any data quality finding
+Total Charges (Clean) = CALCULATE ( [Total Charges], fact_claim[dq_flag] = 0 )
+
+Decided Claims = CALCULATE ( [Claims], fact_claim[status] IN { "Paid", "Denied" } )
+
+Denied Claims = CALCULATE ( [Claims], fact_claim[status] = "Denied" )
+
+Denial Rate = DIVIDE ( [Denied Claims], [Decided Claims] )
+
+// Cash collected as a share of what was billed on claims marked Paid
+Collection Rate =
+DIVIDE (
+    [Total Paid],
+    CALCULATE ( [Total Charges], fact_claim[status] = "Paid" )
+)
+
+// Clean paid claims only, so bad dates cannot distort the average
+Avg Days to Pay =
+CALCULATE (
+    AVERAGE ( fact_claim[days_to_pay] ),
+    fact_claim[status] = "Paid",
+    fact_claim[dq_flag] = 0
+)
+
+Pending AR =
+CALCULATE (
+    [Total Charges],
+    fact_claim[status] = "Pending",
+    fact_claim[charge_amount] > 0
+)
+
+Charges PM = CALCULATE ( [Total Charges], DATEADD ( dim_date[full_date], -1, MONTH ) )
+
+Charges MoM % = DIVIDE ( [Total Charges] - [Charges PM], [Charges PM] )
+
+
+// ---------------------------------------------------------------------
+// DATA QUALITY MEASURES
+// ---------------------------------------------------------------------
+
+Flagged Claims = CALCULATE ( COUNTROWS ( fact_claim ), fact_claim[dq_flag] = 1 )
+
+Clean Claim Rate = DIVIDE ( [Claims] - [Flagged Claims], [Claims] )
+
+DQ Findings = COUNTROWS ( dq_findings )
+
+Dollars at Risk = SUM ( dq_findings[dollars_at_risk] )
+
+Critical Findings = CALCULATE ( [DQ Findings], dq_rule_summary[severity] = "Critical" )
+
+Critical Dollars at Risk = CALCULATE ( [Dollars at Risk], dq_rule_summary[severity] = "Critical" )
+
+Duplicate Payments $ =
+CALCULATE ( SUM ( fact_payment[paid_amount] ), fact_payment[is_duplicate] = 1 )
+
+
+// ---------------------------------------------------------------------
+// CALCULATED COLUMNS  (table: fact_claim)
+// Needs the active relationship dim_date[date_key] -> fact_claim[service_date_key]
+// As-of date is fixed so the report is repeatable with this static dataset.
+// ---------------------------------------------------------------------
+
+// Age Bucket (column)
+Age Bucket =
+VAR ServiceDate = RELATED ( dim_date[full_date] )
+VAR AgeDays = DATEDIFF ( ServiceDate, DATE ( 2025, 12, 31 ), DAY )
+RETURN
+    IF (
+        ISBLANK ( ServiceDate ),
+        "Unknown",
+        SWITCH (
+            TRUE (),
+            AgeDays <= 30, "0-30",
+            AgeDays <= 60, "31-60",
+            AgeDays <= 90, "61-90",
+            "90+"
+        )
+    )
+
+// Age Bucket Order (column). Then: select Age Bucket > Column tools > Sort by column > Age Bucket Order
+Age Bucket Order =
+SWITCH ( fact_claim[Age Bucket], "0-30", 1, "31-60", 2, "61-90", 3, "90+", 4, 5 )
+
+
+// ---------------------------------------------------------------------
+// ROW-LEVEL SECURITY  (Modeling > Manage roles > table filter on dim_payer)
+// One static role per payer. Example for role "Payer - Aetna":
+//
+//     [payer_name] = "Aetna"
+//
+// Test with Modeling > View as. Note: dq_findings is not related to payers,
+// so RLS does not filter it.
+// ---------------------------------------------------------------------
