@@ -4,7 +4,7 @@ An end-to-end data operations project: synthetic healthcare claims go in, twelve
 
 > **All data is synthetic.** No real patients, payers or prices. Procedure codes and charge ranges are invented for demonstration. This is a portfolio project, not healthcare experience. See [Limitations](#limitations-read-this).
 
-The design was modelled on a *Senior Data Operations & Analyst* job description (Power BI, Excel, SQL, Python validation, Azure/Fabric). I did not apply for that role. I used it as a realistic specification to build against.
+The project asks a practical question: how much of manual claims-and-payments reconciliation can become a repeatable, testable system?
 
 **Read the story behind it:** [CASE_STUDY.md](CASE_STUDY.md)
 

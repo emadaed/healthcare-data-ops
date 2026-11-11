@@ -8,7 +8,7 @@ In revenue cycle operations, money moves through claims, payments, denials and a
 
 The usual answer is people with spreadsheets reconciling by hand. I wanted to see how much of that can be turned into a repeatable, testable system, and how to prove it works rather than just claim it does.
 
-I used a real job description (Senior Data Operations & Analyst, with Power BI, SQL, Python validation, Excel and Azure) as the specification. I did not apply for it. It gave me a realistic target instead of a made-up one.
+I set myself a concrete specification: validation, reconciliation, a quality scorecard and Power BI delivery on the Microsoft stack (Power BI, SQL, Python, Azure)
 
 ## Where I'm coming from
 
